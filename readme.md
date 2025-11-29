@@ -160,18 +160,18 @@ Everything runs entirely inside Docker, with no need for local Node or MongoDB i
 
 Place your screenshots in a screenshots/ folder:
 
-![Login](screenshots/login.png)
+![Login](./screenshots/login.png)
 
-![SignUp](screenshots/signup.png)
+![SignUp](./screenshots/signup.png)
 
-![Employee List](screenshots/employees.png)
+![Employee List](./screenshots/employees.png)
 
-![View Employee](screenshots/view_employee.png)
+![View Employee](./screenshots/view_employee.png)
 
-![Edit Employee](screenshots/edit_employee.png)
+![Edit Employee](./screenshots/edit_employee.png)
 
-![Delete Employee](screenshots/delete_employee.png)
+![Delete Employee](./screenshots/delete_employee.png)
 
-![Search by Department](screenshots/search_by_department.png)
+![Search by Department](./screenshots/search_by_department.png)
 
-![Search by Position](screenshots/search_by_position.png)
+![Search by Position](./screenshots/search_by_position.png)
