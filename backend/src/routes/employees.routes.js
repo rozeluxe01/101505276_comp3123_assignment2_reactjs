@@ -22,7 +22,8 @@ import { upload } from "../middleware/upload.js";
 const r = Router();
 
 // Search by dept/position
-r.get("/employees/search", authRequired, searchEmployees);
+r.get("/employees/search", authRequired, searchEmployees); 
+
 
 // List all
 r.get("/employees", authRequired, listEmployees);

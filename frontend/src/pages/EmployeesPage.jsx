@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useEmployees } from "../hooks/useEmployees";
 import { useCreateEmployee } from "../hooks/useCreateEmployee";
-import { useUpdateEmployee } from "../hooks/useUpdateEmployee";
-import { useDeleteEmployee } from "../hooks/useDeleteEmployee";
 
 const emptyEmployeeForm = {
   firstName: "",
@@ -15,7 +13,6 @@ const emptyEmployeeForm = {
   dateOfJoining: "",
 };
 
-// helper: build full image URL using backend base
 const API_BASE =
   process.env.REACT_APP_API_BASE_URL || "http://localhost:3000/api/v1";
 
@@ -32,20 +29,12 @@ function EmployeesPage() {
   const userJson = localStorage.getItem("user");
   const user = userJson ? JSON.parse(userJson) : null;
 
-  // Filters for searching
   const [department, setDepartment] = useState("");
   const [position, setPosition] = useState("");
 
-  // Form state for create / edit
   const [form, setForm] = useState(emptyEmployeeForm);
   const [profilePicFile, setProfilePicFile] = useState(null);
   const [formError, setFormError] = useState("");
-
-  const [mode, setMode] = useState("create"); // "create" | "edit"
-  const [editingId, setEditingId] = useState(null);
-
-  // Simple "view details" state
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   const {
     data: employees,
@@ -63,18 +52,6 @@ function EmployeesPage() {
     isLoading: isCreating,
     error: createError,
   } = useCreateEmployee();
-
-  const {
-    mutate: updateEmployee,
-    isLoading: isUpdating,
-    error: updateError,
-  } = useUpdateEmployee();
-
-  const {
-    mutate: deleteEmployee,
-    isLoading: isDeleting,
-    error: deleteError,
-  } = useDeleteEmployee();
 
   function handleLogout() {
     localStorage.removeItem("token");
@@ -103,33 +80,7 @@ function EmployeesPage() {
     setProfilePicFile(file || null);
   }
 
-  function startCreateMode() {
-    setMode("create");
-    setEditingId(null);
-    setForm(emptyEmployeeForm);
-    setProfilePicFile(null);
-    setFormError("");
-  }
-
-  function startEditMode(emp) {
-    setMode("edit");
-    setEditingId(emp._id);
-    setForm({
-      firstName: emp.firstName || "",
-      lastName: emp.lastName || "",
-      email: emp.email || "",
-      department: emp.department || "",
-      position: emp.position || "",
-      salary: emp.salary ?? "",
-      dateOfJoining: emp.dateOfJoining
-        ? new Date(emp.dateOfJoining).toISOString().slice(0, 10)
-        : "",
-    });
-    setProfilePicFile(null);
-    setFormError("");
-  }
-
-  function handleSubmit(e) {
+  function handleCreateSubmit(e) {
     e.preventDefault();
     setFormError("");
 
@@ -146,45 +97,19 @@ function EmployeesPage() {
       return;
     }
 
-    const payload = { ...form, profilePicFile };
-
-    if (mode === "create") {
-      createEmployee(payload, {
+    createEmployee(
+      {
+        ...form,
+        profilePicFile,
+      },
+      {
         onSuccess: () => {
           setForm(emptyEmployeeForm);
           setProfilePicFile(null);
+          e.target.reset();
         },
-      });
-    } else if (mode === "edit" && editingId) {
-      updateEmployee(
-        { id: editingId, employee: payload },
-        {
-          onSuccess: () => {
-            startCreateMode();
-          },
-        }
-      );
-    }
-  }
-
-  function handleView(emp) {
-    setSelectedEmployee(emp);
-  }
-
-  function handleDelete(emp) {
-    if (!window.confirm(`Delete employee ${emp.firstName} ${emp.lastName}?`)) {
-      return;
-    }
-    deleteEmployee(emp._id, {
-      onSuccess: () => {
-        if (selectedEmployee && selectedEmployee._id === emp._id) {
-          setSelectedEmployee(null);
-        }
-        if (mode === "edit" && editingId === emp._id) {
-          startCreateMode();
-        }
-      },
-    });
+      }
+    );
   }
 
   return (
@@ -208,75 +133,13 @@ function EmployeesPage() {
         </div>
       </header>
 
-      {/* Optional: Selected employee details */}
-      {selectedEmployee && (
-        <section className="card" style={{ marginBottom: "1.5rem" }}>
-          <h2 style={{ marginTop: 0, marginBottom: "0.75rem" }}>
-            Employee Details
-          </h2>
-          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-            {getImageUrl(selectedEmployee.profilePic) ? (
-              <img
-                src={getImageUrl(selectedEmployee.profilePic)}
-                alt={`${selectedEmployee.firstName} ${selectedEmployee.lastName}`}
-                className="employee-avatar"
-              />
-            ) : (
-              <div className="employee-avatar placeholder">
-                {selectedEmployee.firstName?.[0]}
-                {selectedEmployee.lastName?.[0]}
-              </div>
-            )}
-            <div>
-              <div>
-                <strong>
-                  {selectedEmployee.firstName} {selectedEmployee.lastName}
-                </strong>
-              </div>
-              <div>{selectedEmployee.email}</div>
-              <div>
-                {selectedEmployee.department} • {selectedEmployee.position}
-              </div>
-              <div>
-                Joined:{" "}
-                {selectedEmployee.dateOfJoining
-                  ? new Date(
-                      selectedEmployee.dateOfJoining
-                    ).toLocaleDateString()
-                  : "-"}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Add / Edit Employee form */}
+      {/* Add Employee */}
       <section className="card">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "baseline",
-            marginBottom: "0.75rem",
-          }}
-        >
-          <h2 style={{ margin: 0 }}>
-            {mode === "create" ? "Add Employee" : "Edit Employee"}
-          </h2>
-          {mode === "edit" && (
-            <button
-              type="button"
-              className="btn-link"
-              onClick={startCreateMode}
-            >
-              Cancel edit
-            </button>
-          )}
-        </div>
+        <h2 style={{ marginTop: 0, marginBottom: "1rem" }}>Add Employee</h2>
 
         <form
           className="add-employee-form"
-          onSubmit={handleSubmit}
+          onSubmit={handleCreateSubmit}
           encType="multipart/form-data"
         >
           <div className="form-row">
@@ -388,16 +251,10 @@ function EmployeesPage() {
           </div>
 
           {formError && <p className="error-text">{formError}</p>}
-          {createError && mode === "create" && (
+          {createError && (
             <p className="error-text">
               Failed to create employee:{" "}
               {createError.response?.data?.message || createError.message}
-            </p>
-          )}
-          {updateError && mode === "edit" && (
-            <p className="error-text">
-              Failed to update employee:{" "}
-                {updateError.response?.data?.message || updateError.message}
             </p>
           )}
 
@@ -405,15 +262,9 @@ function EmployeesPage() {
             <button
               type="submit"
               className="btn-primary"
-              disabled={isCreating || isUpdating}
+              disabled={isCreating}
             >
-              {mode === "create"
-                ? isCreating
-                  ? "Saving..."
-                  : "Save Employee"
-                : isUpdating
-                ? "Updating..."
-                : "Update Employee"}
+              {isCreating ? "Saving..." : "Save Employee"}
             </button>
           </div>
         </form>
@@ -428,7 +279,10 @@ function EmployeesPage() {
               <input
                 type="text"
                 value={department}
-                onChange={(e) => setDepartment(e.target.value)}
+                onChange={(e) => {
+                  setDepartment(e.target.value);
+                  refetch();
+                }}
                 placeholder="e.g. IT, HR, Sales"
               />
             </div>
@@ -438,20 +292,21 @@ function EmployeesPage() {
               <input
                 type="text"
                 value={position}
-                onChange={(e) => setPosition(e.target.value)}
+                onChange={(e) => {
+                  setPosition(e.target.value);
+                  refetch();
+                }}
                 placeholder="e.g. Manager, Developer"
               />
             </div>
           </div>
 
           <div className="filters-actions">
-            <button type="submit" className="btn-primary">
-              Apply Filters
-            </button>
             <button
               type="button"
               className="btn-link"
               onClick={clearFilters}
+              style={{ fontSize: "0.95rem" }}
             >
               Clear
             </button>
@@ -459,20 +314,13 @@ function EmployeesPage() {
         </form>
       </section>
 
-      {/* Employees Table */}
+      {/* Employees table */}
       <section className="card">
         {isLoading && <p>Loading employees...</p>}
 
         {isError && (
           <p className="error-text">
             Error loading employees: {error.message || "Unknown error"}
-          </p>
-        )}
-
-        {deleteError && (
-          <p className="error-text">
-            Failed to delete employee:{" "}
-            {deleteError.response?.data?.message || deleteError.message}
           </p>
         )}
 
@@ -536,22 +384,25 @@ function EmployeesPage() {
                         <button
                           type="button"
                           className="btn-link"
-                          onClick={() => handleView(emp)}
+                          onClick={() => navigate(`/employees/${emp._id}`)}
                         >
                           View
                         </button>
                         <button
                           type="button"
                           className="btn-link"
-                          onClick={() => startEditMode(emp)}
+                          onClick={() =>
+                            navigate(`/employees/${emp._id}/edit`)
+                          }
                         >
                           Edit
                         </button>
                         <button
                           type="button"
                           className="btn-link"
-                          disabled={isDeleting}
-                          onClick={() => handleDelete(emp)}
+                          onClick={() =>
+                            navigate(`/employees/${emp._id}/delete`)
+                          }
                         >
                           Delete
                         </button>

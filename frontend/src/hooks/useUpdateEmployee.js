@@ -23,11 +23,11 @@ export function useUpdateEmployee() {
       const res = await api.put(`/emp/employees/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
       return res.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["employees"] });
+      queryClient.invalidateQueries({ queryKey: ["employee"] });
     },
   });
 }

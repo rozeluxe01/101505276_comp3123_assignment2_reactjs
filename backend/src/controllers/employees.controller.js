@@ -132,10 +132,16 @@ export async function deleteEmployeeByQuery(req, res, next) {
 export async function searchEmployees(req, res, next) {
   try {
     const { department, position } = req.query;
+
     const filter = {};
 
-    if (department) filter.department = department;
-    if (position) filter.position = position;
+    if (department) {
+      filter.department = { $regex: department, $options: "i" }; 
+    }
+
+    if (position) {
+      filter.position = { $regex: position, $options: "i" }; 
+    }
 
     const employees = await Employee.find(filter).sort({
       lastName: 1,
@@ -147,3 +153,4 @@ export async function searchEmployees(req, res, next) {
     next(err);
   }
 }
+

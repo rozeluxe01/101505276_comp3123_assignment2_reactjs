@@ -5,7 +5,7 @@ const api = axios.create({
     process.env.REACT_APP_API_BASE_URL || "http://localhost:3000/api/v1",
 });
 
-// Automatically attach token if present
+// attach JWT token automatically
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {

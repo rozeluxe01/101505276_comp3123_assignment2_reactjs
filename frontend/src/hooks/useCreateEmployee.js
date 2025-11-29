@@ -8,7 +8,6 @@ export function useCreateEmployee() {
     mutationFn: async (employee) => {
       const formData = new FormData();
 
-      // append simple fields
       formData.append("firstName", employee.firstName);
       formData.append("lastName", employee.lastName);
       formData.append("email", employee.email);
@@ -17,7 +16,6 @@ export function useCreateEmployee() {
       formData.append("salary", employee.salary);
       formData.append("dateOfJoining", employee.dateOfJoining);
 
-      // append file if provided
       if (employee.profilePicFile) {
         formData.append("profilePic", employee.profilePicFile);
       }
@@ -28,7 +26,6 @@ export function useCreateEmployee() {
       return res.data;
     },
     onSuccess: () => {
-      // refresh employee list
       queryClient.invalidateQueries({ queryKey: ["employees"] });
     },
   });
