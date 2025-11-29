@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: comp3123-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: comp3123-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      # override in .env if needed
+      MONGODB_URI: mongodb://mongo:27017/comp3123db
+      NODE_ENV: development
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/uploads:/app/uploads   # keep uploaded pictures
+
+  frontend:
+    build: ./101505276_comp3123_assignment2_reactjs
+    container_name: comp3123-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3001:3000"   # host:container (CRA runs on 3000 inside)
+    environment:
+      # For your React app to know the backend URL
+      REACT_APP_API_BASE_URL: "http://localhost:3000/api/v1"
+
+volumes:
+  mongo-data:
