@@ -21,7 +21,7 @@ function App() {
           }
         />
 
-        {/* default: redirect everything unknown to /login */}
+        {/* default: redirect to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </div>

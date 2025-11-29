@@ -32,11 +32,9 @@ function LoginPage() {
       });
 
       const { token, user } = res.data;
-
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // TODO: later navigate to /employees
       navigate("/employees", { replace: true });
     } catch (err) {
       console.error(err);
@@ -49,44 +47,46 @@ function LoginPage() {
   }
 
   return (
-    <div className="auth-container">
-      <h1>Employee Portal Login</h1>
+    <div className="auth-screen">
+      <div className="auth-container">
+        <h1>Employee Portal Login</h1>
 
-      <form onSubmit={handleSubmit} className="auth-form">
-        <label>
-          Email
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            required
-          />
-        </label>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label>
+            Email
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              required
+            />
+          </label>
 
-        <label>
-          Password
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="••••••••"
-            required
-          />
-        </label>
+          <label>
+            Password
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+            />
+          </label>
 
-        {error && <div className="auth-error">{error}</div>}
+          {error && <div className="auth-error">{error}</div>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+          <button type="submit" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
 
-      <p className="auth-switch">
-        Don’t have an account? <Link to="/signup">Sign up</Link>
-      </p>
+        <p className="auth-switch">
+          Don’t have an account? <Link to="/signup">Sign up</Link>
+        </p>
+      </div>
     </div>
   );
 }

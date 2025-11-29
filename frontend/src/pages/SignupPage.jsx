@@ -33,11 +33,9 @@ function SignupPage() {
       });
 
       const { token, user } = res.data;
-
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
-      // After signup, go to employee list (or login if you prefer)
       navigate("/employees", { replace: true });
     } catch (err) {
       console.error(err);
@@ -51,56 +49,58 @@ function SignupPage() {
   }
 
   return (
-    <div className="auth-container">
-      <h1>Create an Account</h1>
+    <div className="auth-screen">
+      <div className="auth-container">
+        <h1>Create an Account</h1>
 
-      <form onSubmit={handleSubmit} className="auth-form">
-        <label>
-          Username
-          <input
-            type="text"
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-            placeholder="jaira123"
-            required
-          />
-        </label>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label>
+            Username
+            <input
+              type="text"
+              name="username"
+              value={form.username}
+              onChange={handleChange}
+              placeholder="jaira123"
+              required
+            />
+          </label>
 
-        <label>
-          Email
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-            required
-          />
-        </label>
+          <label>
+            Email
+            <input
+              type="email"
+              name="email"
+              value={form.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              required
+            />
+          </label>
 
-        <label>
-          Password
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            placeholder="At least 6 characters"
-            required
-          />
-        </label>
+          <label>
+            Password
+            <input
+              type="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              placeholder="At least 6 characters"
+              required
+            />
+          </label>
 
-        {error && <div className="auth-error">{error}</div>}
+          {error && <div className="auth-error">{error}</div>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? "Signing up..." : "Sign up"}
-        </button>
-      </form>
+          <button type="submit" disabled={loading}>
+            {loading ? "Signing up..." : "Sign up"}
+          </button>
+        </form>
 
-      <p className="auth-switch">
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
+        <p className="auth-switch">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </div>
     </div>
   );
 }
