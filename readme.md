@@ -52,8 +52,11 @@ The entire application runs using **one command** thanks to Docker Compose.
 
 From the project root:
 
+
 ```bash
 docker compose up --build
+
+```
 
 Docker will build:
 
@@ -62,6 +65,7 @@ Docker will build:
 | **backend**  | 3000  | Node.js API with MongoDB connection |
 | **frontend** | 3001  | React application                   |
 | **mongo**    | 27017 | MongoDB database                    |
+
 
 2️⃣ Access the application
 
