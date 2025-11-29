@@ -28,7 +28,7 @@ services:
       - ./backend/uploads:/app/uploads   # keep uploaded pictures
 
   frontend:
-    build: ./101505276_comp3123_assignment2_reactjs
+    build: ./frontend
     container_name: comp3123-frontend
     restart: unless-stopped
     depends_on:
